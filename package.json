@@ -1,0 +1,17 @@
+{
+  "name": "goto-skills",
+  "version": "1.0.0",
+  "description": "Aggregate and manage agent skills from multiple source repositories",
+  "main": "index.js",
+  "type": "module",
+  "bin": {
+    "skills": "./index.js"
+  },
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "fs-extra": "^11.2.0",
+    "prompts": "^2.4.2"
+  }
+}

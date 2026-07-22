@@ -1,0 +1,45 @@
+name: Sync Skills
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # Runs daily at midnight UTC
+  workflow_dispatch: # Allows manual trigger
+
+permissions:
+  contents: write # Required to push commits back to the repo
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci || npm install
+
+      - name: Run Sync
+        run: node index.js sync
+
+      - name: Commit and Push Changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # Add all changes under skills/ and registry.json
+          git add skills/ registry.json
+          
+          # Check if there are any changes to commit
+          if git diff --cached --quiet; then
+            echo "No changes in skills registry."
+          else
+            git commit -m "chore: auto-sync skills with source repositories [skip ci]"
+            git push
+          fi

@@ -1,0 +1,20 @@
+{
+  "repositories": [
+    {
+      "url": "https://github.com/anthropics/skills.git",
+      "category": "general"
+    },
+    {
+      "url": "https://github.com/addyosmani/agent-skills.git",
+      "category": "general"
+    },
+    {
+      "url": "https://github.com/obra/superpowers.git",
+      "category": "general"
+    },
+    {
+      "url": "https://github.com/anthropics/knowledge-work-plugins.git",
+      "category": "general"
+    }
+  ]
+}
