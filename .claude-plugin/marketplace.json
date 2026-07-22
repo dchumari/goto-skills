@@ -1,0 +1,116 @@
+{
+  "name": "goto-skills",
+  "owner": {
+    "name": "dchumari"
+  },
+  "metadata": {
+    "description": "Aggregated Agent Skills marketplace",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "general-document-skills",
+      "description": "Collection of document processing suite including Excel, Word, PowerPoint, and PDF capabilities",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/general/xlsx",
+        "./skills/general/docx",
+        "./skills/general/pptx",
+        "./skills/general/pdf"
+      ]
+    },
+    {
+      "name": "general-example-skills",
+      "description": "Collection of example skills demonstrating various capabilities including skill creation, MCP building, visual design, algorithmic art, internal communications, web testing, artifact building, Slack GIFs, and theme styling",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/general/algorithmic-art",
+        "./skills/general/brand-guidelines",
+        "./skills/general/canvas-design",
+        "./skills/general/doc-coauthoring",
+        "./skills/general/frontend-design",
+        "./skills/general/internal-comms",
+        "./skills/general/mcp-builder",
+        "./skills/general/skill-creator",
+        "./skills/general/slack-gif-creator",
+        "./skills/general/theme-factory",
+        "./skills/general/web-artifacts-builder",
+        "./skills/general/webapp-testing"
+      ]
+    },
+    {
+      "name": "general-claude-api",
+      "description": "Claude API and SDK documentation skill for building LLM-powered applications",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/general/claude-api"
+      ]
+    },
+    {
+      "name": "general-agent-skills",
+      "description": "Skills from agent-skills (https://github.com/addyosmani/agent-skills.git)",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/general/api-and-interface-design",
+        "./skills/general/browser-testing-with-devtools",
+        "./skills/general/ci-cd-and-automation",
+        "./skills/general/code-review-and-quality",
+        "./skills/general/code-simplification",
+        "./skills/general/context-engineering",
+        "./skills/general/debugging-and-error-recovery",
+        "./skills/general/deprecation-and-migration",
+        "./skills/general/documentation-and-adrs",
+        "./skills/general/doubt-driven-development",
+        "./skills/general/frontend-ui-engineering",
+        "./skills/general/git-workflow-and-versioning",
+        "./skills/general/idea-refine",
+        "./skills/general/incremental-implementation",
+        "./skills/general/interview-me",
+        "./skills/general/observability-and-instrumentation",
+        "./skills/general/performance-optimization",
+        "./skills/general/planning-and-task-breakdown",
+        "./skills/general/security-and-hardening",
+        "./skills/general/shipping-and-launch",
+        "./skills/general/source-driven-development",
+        "./skills/general/spec-driven-development",
+        "./skills/general/test-driven-development",
+        "./skills/general/using-agent-skills"
+      ]
+    },
+    {
+      "name": "general-superpowers",
+      "description": "Skills from superpowers (https://github.com/obra/superpowers.git)",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/general/brainstorming",
+        "./skills/general/dispatching-parallel-agents",
+        "./skills/general/executing-plans",
+        "./skills/general/finishing-a-development-branch",
+        "./skills/general/receiving-code-review",
+        "./skills/general/requesting-code-review",
+        "./skills/general/subagent-driven-development",
+        "./skills/general/systematic-debugging",
+        "./skills/general/test-driven-development",
+        "./skills/general/using-git-worktrees",
+        "./skills/general/using-superpowers",
+        "./skills/general/verification-before-completion",
+        "./skills/general/writing-plans",
+        "./skills/general/writing-skills"
+      ]
+    },
+    {
+      "name": "general-learn-with-coursera",
+      "description": "Turn any learning intent into a personalized Coursera experience. Asks three quick questions (topic, familiarity, preferred format), searches Coursera's catalog, and delivers the right next step — a course, hands-on project, short video, or live roleplay — then maps a path forward. Requires the Coursera connector for catalog tools.",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/general/learn-with-coursera"
+      ]
+    }
+  ]
+}

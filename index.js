@@ -85,9 +85,12 @@ async function syncRepos() {
   await removeDirWithRetry(SKILLS_DIR);
   await fs.ensureDir(SKILLS_DIR);
 
+  const plugins = [];
+
   for (const repo of registry.repositories) {
     const repoName = repo.url.split('/').pop().replace('.git', '');
     const tempRepoPath = path.join(TMP_DIR, repoName);
+    const repoImportedSkills = [];
     
     console.log(`\nCloning ${repo.url}...`);
     try {
@@ -112,6 +115,7 @@ async function syncRepos() {
             const destPath = path.join(categoryDir, item);
             await fs.copy(itemPath, destPath);
             console.log(`-> Imported skill: ${item} (Category: ${repo.category})`);
+            repoImportedSkills.push(item);
           }
         }
       } else if (hasSkillMd) {
@@ -121,6 +125,7 @@ async function syncRepos() {
           filter: (src) => !src.includes('.git')
         });
         console.log(`-> Imported repository as a single skill: ${repoName} (Category: ${repo.category})`);
+        repoImportedSkills.push(repoName);
       } else {
         // Scan subdirectories for nested skills (e.g. plugins containing skills/)
         let foundAny = false;
@@ -142,6 +147,7 @@ async function syncRepos() {
                   const destPath = path.join(categoryDir, item);
                   await fs.copy(itemPath, destPath);
                   console.log(`-> Imported nested skill: ${item} (Category: ${repo.category})`);
+                  repoImportedSkills.push(item);
                   foundAny = true;
                 }
               }
@@ -149,6 +155,7 @@ async function syncRepos() {
               const destPath = path.join(categoryDir, sub);
               await fs.copy(subPath, destPath);
               console.log(`-> Imported nested skill module: ${sub} (Category: ${repo.category})`);
+              repoImportedSkills.push(sub);
               foundAny = true;
             }
           }
@@ -158,6 +165,49 @@ async function syncRepos() {
           console.log(`Warning: Repository ${repoName} does not contain any "skills/" directories or "SKILL.md" files. Skipping.`);
         }
       }
+
+      // Check if the repo has its own marketplace.json to preserve original groups
+      let addedFromMarketplace = false;
+      const sourceMarketplaceFile = path.join(tempRepoPath, '.claude-plugin', 'marketplace.json');
+      const hasSourceMarketplace = await fs.pathExists(sourceMarketplaceFile);
+
+      if (hasSourceMarketplace) {
+        try {
+          const sourceMarketplace = await fs.readJson(sourceMarketplaceFile);
+          if (sourceMarketplace.plugins && Array.isArray(sourceMarketplace.plugins)) {
+            for (const p of sourceMarketplace.plugins) {
+              if (!p.skills || !Array.isArray(p.skills)) continue;
+
+              const mappedSkills = p.skills.map(s => {
+                const skillName = path.basename(s);
+                return `./skills/${repo.category}/${skillName}`;
+              });
+              plugins.push({
+                name: `${repo.category}-${p.name}`,
+                description: p.description,
+                source: './',
+                strict: false,
+                skills: mappedSkills
+              });
+              addedFromMarketplace = true;
+            }
+          }
+        } catch (err) {
+          console.error(`Warning: Failed to parse marketplace.json for ${repoName}:`, err.message);
+        }
+      }
+
+      if (!addedFromMarketplace && repoImportedSkills.length > 0) {
+        // Fallback: group everything from this repo under one plugin group
+        plugins.push({
+          name: `${repo.category}-${repoName}`,
+          description: `Skills from ${repoName} (${repo.url})`,
+          source: './',
+          strict: false,
+          skills: repoImportedSkills.map(s => `./skills/${repo.category}/${s}`)
+        });
+      }
+
     } catch (error) {
       console.error(`Error syncing repository ${repo.url}:`, error.message);
     } finally {
@@ -175,6 +225,25 @@ async function syncRepos() {
   } catch (err) {
     console.error(`Warning: Could not remove temporary directory ${TMP_DIR}:`, err.message);
   }
+
+  // Write top-level marketplace.json
+  const marketplaceDir = path.join(__dirname, '.claude-plugin');
+  await fs.ensureDir(marketplaceDir);
+  const marketplaceFile = path.join(marketplaceDir, 'marketplace.json');
+  const manifest = {
+    name: 'goto-skills',
+    owner: {
+      name: 'dchumari'
+    },
+    metadata: {
+      description: 'Aggregated Agent Skills marketplace',
+      version: '1.0.0'
+    },
+    plugins: plugins
+  };
+  await fs.writeJson(marketplaceFile, manifest, { spaces: 2 });
+  console.log(`\nGenerated .claude-plugin/marketplace.json with ${plugins.length} groups.`);
+
   console.log('\nSync complete.');
 }
 
